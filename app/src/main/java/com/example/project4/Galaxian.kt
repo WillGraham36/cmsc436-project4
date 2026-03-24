@@ -2,6 +2,12 @@ package com.example.project4
 
 import kotlin.random.Random
 
+enum class GameState {
+    PLAYING,
+    WON,
+    LOST
+}
+
 class Galaxian(
     private val screenX: Int,
     private val screenY: Int,
@@ -13,12 +19,16 @@ class Galaxian(
     }
 
     val enemies = ArrayList<Enemy>()
+    var score = 0
+    var gameState = GameState.PLAYING
 
     init {
         createEnemies()
     }
 
     fun update() {
+        if (gameState != GameState.PLAYING) return
+
         moveEnemies()
     }
 
@@ -83,12 +93,11 @@ class Galaxian(
 
             // Reset if off bottom
             if (enemy.y > screenY) {
-                resetEnemy(enemy)
+                resetEnemyToTop(enemy)
             }
         }
     }
-
-    private fun resetEnemy(enemy: Enemy) {
+    private fun resetEnemyToTop(enemy: Enemy) {
         enemy.y = 100f
 
         val speed = 8f
@@ -98,4 +107,26 @@ class Galaxian(
         enemy.isMoving = false
         enemy.delay = Random.nextInt(0, 240)
     }
+
+    fun destroyEnemy(enemy: Enemy) {
+
+        if (!enemy.isAlive) return
+
+        enemy.isAlive = false
+        score++
+
+        checkGameOver()
+    }
+
+    private fun checkGameOver() {
+
+        if (score == NUM_ENEMIES) {
+            gameState = GameState.WON
+        }
+    }
+
+    fun loseGame() {
+        gameState = GameState.LOST
+    }
+
 }
