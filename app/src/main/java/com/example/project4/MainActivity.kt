@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.graphics.scale
+import java.util.Timer
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,11 +22,13 @@ class MainActivity : AppCompatActivity() {
         val enemySize = screenX / 10
         val enemyBitmap = original.scale(enemySize, enemySize, false)
 
-        // Create model (pass width for spacing)
         val galaxian = Galaxian(screenX, screenY, enemyBitmap.width)
 
         // Create view
         val gameView = GameView(this, galaxian, enemyBitmap)
         setContentView(gameView)
+
+        val timer = Timer()
+        timer.schedule(GameTimerTask(galaxian, gameView), 0, 30)
     }
 }
