@@ -13,7 +13,8 @@ class Galaxian(
     private val screenY: Int,
     private val enemyWidth: Int
 ) {
-
+    lateinit var ship: Ship
+    lateinit var bullet: Bullet
     companion object {
         const val NUM_ENEMIES = 6
     }
@@ -24,12 +25,29 @@ class Galaxian(
 
     init {
         createEnemies()
+
+        val shipWidth = 150
+        val shipHeight = 150
+
+        ship = Ship(
+            x = (screenX / 2 - shipWidth / 2).toFloat(),
+            y = (screenY - 200).toFloat(),
+            width = shipWidth,
+            height = shipHeight
+        )
+
+        bullet = Bullet(
+            x = ship.x + shipWidth / 2,
+            y = ship.y
+        )
     }
 
     fun update() {
         if (gameState != GameState.PLAYING) return
 
         moveEnemies()
+        moveBullet()
+        checkCollision()
     }
 
     private fun createEnemies() {
@@ -94,6 +112,48 @@ class Galaxian(
             // Reset if off bottom
             if (enemy.y > screenY) {
                 resetEnemyToTop(enemy)
+            }
+        }
+    }
+
+    private fun moveBullet(){
+        if (!bullet.isActive) {
+            bullet.x = ship.x + ship.width / 2
+            bullet.y = ship.y
+            return
+        }
+
+        bullet.y -= bullet.speed
+
+        if (bullet.y < 0) {
+            bullet.isActive = false
+        }
+    }
+
+    private fun checkCollision(){
+        if (bullet.isActive) {
+            for (enemy in enemies) {
+                if (enemy.isAlive &&
+                    bullet.x > enemy.x &&
+                    bullet.x < enemy.x + enemyWidth &&
+                    bullet.y > enemy.y &&
+                    bullet.y < enemy.y + enemyWidth
+                ) {
+                    destroyEnemy(enemy)
+                    bullet.isActive = false
+                }
+            }
+        }
+
+        for (enemy in enemies) {
+            if (enemy.isAlive &&
+                enemy.x < ship.x + ship.width &&
+                enemy.x + enemyWidth > ship.x &&
+                enemy.y < ship.y + ship.height &&
+                enemy.y + enemyWidth > ship.y
+            ) {
+                enemy.isAlive = false
+                loseGame()
             }
         }
     }
