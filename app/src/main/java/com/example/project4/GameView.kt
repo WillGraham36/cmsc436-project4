@@ -43,11 +43,11 @@ class GameView(
             }
         }
 
-        if (galaxian.gameState == GameState.PLAYING) {
+        if (galaxian.gameState == GameState.PLAYING && galaxian.ship.isAlive) {
             canvas.drawBitmap(shipBitmap, galaxian.ship.x, galaxian.ship.y, null)
         }
 
-        if (galaxian.bullet.isActive) {
+        if (galaxian.gameState == GameState.PLAYING) {
             canvas.drawCircle(
                 galaxian.bullet.x,
                 galaxian.bullet.y,

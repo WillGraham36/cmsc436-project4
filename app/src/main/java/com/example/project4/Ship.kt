@@ -4,5 +4,6 @@ class Ship(
     var x: Float,
     var y: Float,
     val width: Int,
-    val height: Int
+    val height: Int,
+    var isAlive: Boolean = true
 )

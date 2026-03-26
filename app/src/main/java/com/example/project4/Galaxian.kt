@@ -131,6 +131,8 @@ class Galaxian(
     }
 
     private fun checkCollision(){
+        if (gameState != GameState.PLAYING) return
+
         if (bullet.isActive) {
             for (enemy in enemies) {
                 if (enemy.isAlive &&
@@ -153,6 +155,7 @@ class Galaxian(
                 enemy.y + enemyWidth > ship.y
             ) {
                 enemy.isAlive = false
+                ship.isAlive = false
                 loseGame()
             }
         }
